@@ -23,6 +23,15 @@ extern u16 si,di,bp,sp;
 extern u16 cs,ds,es,ss;
 extern u16 ip;
 
+extern u16 flags;
+
+extern bool halted;
+
+extern int seg;
+extern int rep;
+
+unsigned getaddr(u16 seg, off);
+
 void init();
 void tick();
 }
