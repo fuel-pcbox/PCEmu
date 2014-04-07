@@ -72,22 +72,22 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         case SEG_DEFAULT:
         case SEG_DS:
         {
-            res.src8 = &RAM::RAM[getaddr(ds,bx+si)];
+            res.src8 = &RAM::RAM[getaddr(ds,bxreg.w+si)];
             break;
         }
         case SEG_CS:
         {
-            res.src8 = &RAM::RAM[getaddr(cs,bx+si)];
+            res.src8 = &RAM::RAM[getaddr(cs,bxreg.w+si)];
             break;
         }
         case SEG_ES:
         {
-            res.src8 = &RAM::RAM[getaddr(es,bx+si)];
+            res.src8 = &RAM::RAM[getaddr(es,bxreg.w+si)];
             break;
         }
         case SEG_SS:
         {
-            res.src8 = &RAM::RAM[getaddr(ss,bx+si)];
+            res.src8 = &RAM::RAM[getaddr(ss,bxreg.w+si)];
             break;
         }
         }
@@ -99,22 +99,22 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         case SEG_DEFAULT:
         case SEG_DS:
         {
-            res.src8 = &RAM::RAM[getaddr(ds,bx+di)];
+            res.src8 = &RAM::RAM[getaddr(ds,bxreg.w+di)];
             break;
         }
         case SEG_CS:
         {
-            res.src8 = &RAM::RAM[getaddr(cs,bx+di)];
+            res.src8 = &RAM::RAM[getaddr(cs,bxreg.w+di)];
             break;
         }
         case SEG_ES:
         {
-            res.src8 = &RAM::RAM[getaddr(es,bx+di)];
+            res.src8 = &RAM::RAM[getaddr(es,bxreg.w+di)];
             break;
         }
         case SEG_SS:
         {
-            res.src8 = &RAM::RAM[getaddr(ss,bx+di)];
+            res.src8 = &RAM::RAM[getaddr(ss,bxreg.w+di)];
             break;
         }
         }
@@ -262,22 +262,22 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         case SEG_DEFAULT:
         case SEG_DS:
         {
-            res.src8 = &RAM::RAM[getaddr(ds,bx)];
+            res.src8 = &RAM::RAM[getaddr(ds,bxreg.w)];
             break;
         }
         case SEG_CS:
         {
-            res.src8 = &RAM::RAM[getaddr(cs,bx)];
+            res.src8 = &RAM::RAM[getaddr(cs,bxreg.w)];
             break;
         }
         case SEG_ES:
         {
-            res.src8 = &RAM::RAM[getaddr(es,bx)];
+            res.src8 = &RAM::RAM[getaddr(es,bxreg.w)];
             break;
         }
         case SEG_SS:
         {
-            res.src8 = &RAM::RAM[getaddr(ss,bx)];
+            res.src8 = &RAM::RAM[getaddr(ss,bxreg.w)];
             break;
         }
         }
@@ -290,22 +290,22 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         case SEG_DEFAULT:
         case SEG_DS:
         {
-            res.src8 = &RAM::RAM[getaddr(ds,bx+si+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ds,bxreg.w+si+tmp1)];
             break;
         }
         case SEG_CS:
         {
-            res.src8 = &RAM::RAM[getaddr(cs,bx+si+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(cs,bxreg.w+si+tmp1)];
             break;
         }
         case SEG_ES:
         {
-            res.src8 = &RAM::RAM[getaddr(es,bx+si+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(es,bxreg.w+si+tmp1)];
             break;
         }
         case SEG_SS:
         {
-            res.src8 = &RAM::RAM[getaddr(ss,bx+si+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ss,bxreg.w+si+tmp1)];
             break;
         }
         }
@@ -318,22 +318,22 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         case SEG_DEFAULT:
         case SEG_DS:
         {
-            res.src8 = &RAM::RAM[getaddr(ds,bx+di+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ds,bxreg.w+di+tmp1)];
             break;
         }
         case SEG_CS:
         {
-            res.src8 = &RAM::RAM[getaddr(cs,bx+di+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(cs,bxreg.w+di+tmp1)];
             break;
         }
         case SEG_ES:
         {
-            res.src8 = &RAM::RAM[getaddr(es,bx+di+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(es,bxreg.w+di+tmp1)];
             break;
         }
         case SEG_SS:
         {
-            res.src8 = &RAM::RAM[getaddr(ss,bx+di+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ss,bxreg.w+di+tmp1)];
             break;
         }
         }
@@ -486,22 +486,22 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         case SEG_DEFAULT:
         case SEG_DS:
         {
-            res.src8 = &RAM::RAM[getaddr(ds,bx+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ds,bxreg.w+tmp1)];
             break;
         }
         case SEG_CS:
         {
-            res.src8 = &RAM::RAM[getaddr(cs,bx+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(cs,bxreg.w+tmp1)];
             break;
         }
         case SEG_ES:
         {
-            res.src8 = &RAM::RAM[getaddr(es,bx+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(es,bxreg.w+tmp1)];
             break;
         }
         case SEG_SS:
         {
-            res.src8 = &RAM::RAM[getaddr(ss,bx+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ss,bxreg.w+tmp1)];
             break;
         }
         }
@@ -514,22 +514,22 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         case SEG_DEFAULT:
         case SEG_DS:
         {
-            res.src8 = &RAM::RAM[getaddr(ds,bx+si+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ds,bxreg.w+si+tmp1)];
             break;
         }
         case SEG_CS:
         {
-            res.src8 = &RAM::RAM[getaddr(cs,bx+si+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(cs,bxreg.w+si+tmp1)];
             break;
         }
         case SEG_ES:
         {
-            res.src8 = &RAM::RAM[getaddr(es,bx+si+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(es,bxreg.w+si+tmp1)];
             break;
         }
         case SEG_SS:
         {
-            res.src8 = &RAM::RAM[getaddr(ss,bx+si+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ss,bxreg.w+si+tmp1)];
             break;
         }
         }
@@ -542,22 +542,22 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         case SEG_DEFAULT:
         case SEG_DS:
         {
-            res.src8 = &RAM::RAM[getaddr(ds,bx+di+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ds,bxreg.w+di+tmp1)];
             break;
         }
         case SEG_CS:
         {
-            res.src8 = &RAM::RAM[getaddr(cs,bx+di+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(cs,bxreg.w+di+tmp1)];
             break;
         }
         case SEG_ES:
         {
-            res.src8 = &RAM::RAM[getaddr(es,bx+di+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(es,bxreg.w+di+tmp1)];
             break;
         }
         case SEG_SS:
         {
-            res.src8 = &RAM::RAM[getaddr(ss,bx+di+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ss,bxreg.w+di+tmp1)];
             break;
         }
         }
@@ -710,22 +710,22 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         case SEG_DEFAULT:
         case SEG_DS:
         {
-            res.src8 = &RAM::RAM[getaddr(ds,bx+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ds,bxreg.w+tmp1)];
             break;
         }
         case SEG_CS:
         {
-            res.src8 = &RAM::RAM[getaddr(cs,bx+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(cs,bxreg.w+tmp1)];
             break;
         }
         case SEG_ES:
         {
-            res.src8 = &RAM::RAM[getaddr(es,bx+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(es,bxreg.w+tmp1)];
             break;
         }
         case SEG_SS:
         {
-            res.src8 = &RAM::RAM[getaddr(ss,bx+tmp1)];
+            res.src8 = &RAM::RAM[getaddr(ss,bxreg.w+tmp1)];
             break;
         }
         }
@@ -789,7 +789,7 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         }
         case 1:
         {
-            res.src16 = &bxreg.w;
+            res.src16 = &bxreg.wreg.w;
         }
         }
         break;
@@ -1214,6 +1214,20 @@ void rtick()
             handleZ(axreg.w);
             handleS(tmp3,true);
             ip+=3;
+            break;
+        }
+        case 0x06:
+        {
+            sp-=2;
+            RAM::wb(ss,sp,es);
+            ip+=1;
+            break;
+        }
+        case 0x07:
+        {
+            es = RAM::rb(ss,sp);
+            sp+=2;
+            ip+=1;
             break;
         }
         }
