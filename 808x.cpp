@@ -1314,7 +1314,7 @@ void rtick()
             ip+=3;
             break;
         }
-		case 0x06:
+		case 0x0E:
         {
             sp-=2;
             RAM::wb(ss,sp,cs);
