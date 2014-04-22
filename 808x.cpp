@@ -859,7 +859,7 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         break;
     }
     }
-    
+
     switch(modrm & 0x38)
     {
     case 0x00:
@@ -1068,7 +1068,7 @@ inline void handleP(u16 val, bool word)
     if(word)
     {
         u8 v = 0;
-        for(int i = 0;i < 16;i++)
+        for(int i = 0; i < 16; i++)
         {
             if(val & (1 << i)) v ^= 1;
         }
@@ -1078,7 +1078,7 @@ inline void handleP(u16 val, bool word)
     else
     {
         u8 v = 0;
-        for(int i = 0;i < 8;i++)
+        for(int i = 0; i < 8; i++)
         {
             if(val & (1 << i)) v ^= 1;
         }
@@ -1230,7 +1230,7 @@ void rtick()
             ip+=1;
             break;
         }
-		case 0x08:
+        case 0x08:
         {
             u8 modrm = RAM::rb(cs,ip+1);
             locs loc = decodeops(seg,modrm,false,false);
@@ -1314,16 +1314,126 @@ void rtick()
             ip+=3;
             break;
         }
-		case 0x0E:
+        case 0x0E:
         {
             sp-=2;
             RAM::wb(ss,sp,cs);
             ip+=1;
             break;
         }
-        case 0x0F: //8086/8088 only
+        //0x0F is undocumented on the 8086.
+        case 0x10:
         {
-            cs = RAM::rb(ss,sp);
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,false,false);
+            u8 tmp = *loc.src8;
+            u8 tmp1 = *loc.dst8;
+            u16 tmp2 = tmp + tmp1 + (flags & 1);
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOAdd(tmp,tmp1,false);
+            *loc.src8 += *loc.dst8 + (flags & 1);
+            u8 tmp3 = *loc.src8;
+            handleP(tmp3,false);
+            handleZ(tmp3);
+            handleS(tmp3,false);
+            ip+=2;
+            break;
+        }
+        case 0x11:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,true,false);
+            u16 tmp = *loc.src16;
+            u16 tmp1 = *loc.dst16;
+            u32 tmp2 = tmp + tmp1 + (flags & 1);
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOAdd(tmp,tmp1,true);
+            *loc.src16 += *loc.dst16 + (flags & 1);
+            u16 tmp3 = *loc.src16;
+            handleP(tmp3,true);
+            handleZ(tmp3);
+            handleS(tmp3,true);
+            ip+=2;
+            break;
+        }
+        case 0x12:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,false,false);
+            u8 tmp = *loc.dst8;
+            u8 tmp1 = *loc.src8;
+            u16 tmp2 = tmp + tmp1 + (flags & 1);
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOAdd(tmp1,tmp,false);
+            *loc.dst8 += *loc.src8 + (flags & 1);
+            u8 tmp3 = *loc.dst8;
+            handleP(tmp3,false);
+            handleZ(tmp3);
+            handleS(tmp3,false);
+            ip+=2;
+            break;
+        }
+        case 0x13:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,true,false);
+            u16 tmp = *loc.dst16;
+            u16 tmp1 = *loc.src16;
+            u32 tmp2 = tmp + tmp1 + (flags & 1);
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOAdd(tmp1,tmp,true);
+            *loc.dst16 += *loc.src16 + (flags & 1);
+            u16 tmp3 = *loc.dst16;
+            handleP(tmp3,true);
+            handleZ(tmp3);
+            handleS(tmp3,true);
+            ip+=2;
+            break;
+        }
+        case 0x14:
+        {
+            u8 tmp = axreg.parts.l;
+            u8 tmp1 = RAM::rb(cs,ip+1);
+            u16 tmp2 = tmp + tmp1 + (flags & 1);
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOAdd(tmp,tmp1,false);
+            axreg.parts.l += tmp1 + (flags & 1);
+            handleP(axreg.parts.l,false);
+            handleZ(axreg.parts.l);
+            handleS(tmp3,false);
+            ip+=2;
+            break;
+        }
+        case 0x15:
+        {
+            u16 tmp = axreg.w;
+            u16 tmp1 = RAM::rb(cs,ip+1) | (RAM::rb(cs,ip+2)<<8);
+            u32 tmp2 = tmp + tmp1 + (flags & 1);
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOAdd(tmp,tmp1,true);
+            axreg.w += tmp1 + (flags & 1);
+            handleP(axreg.w,true);
+            handleZ(axreg.w);
+            handleS(tmp3,true);
+            ip+=3;
+            break;
+        }
+        case 0x16:
+        {
+            sp-=2;
+            RAM::wb(ss,sp,ss);
+            ip+=1;
+            break;
+        }
+        case 0x17:
+        {
+            ss = RAM::rb(ss,sp);
             sp+=2;
             ip+=1;
             break;
@@ -1351,7 +1461,7 @@ void tick()
     if(!halted)
     {
         u8 op = RAM::rb(cs,ip);
-        
+
         switch(op)
         {
         case 0x26:
