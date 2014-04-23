@@ -1073,6 +1073,34 @@ inline void handleOAdd(u16 val1, u16 val2, bool word)
     }
 }
 
+inline void handleOSub(u16 val1, u16 val2, bool word)
+{
+    if(word)
+    {
+        if((((val1 ^ val2) ^ 0x8000) & ((val1 - val2) ^ val1) & 0x8000)) flags |= 0x0800;
+        else flags &= 0xF7FF;
+    }
+    else
+    {
+        if((((val1 ^ val2) ^ 0x80) & ((val1 - val2) ^ val1) & 0x80)) flags |= 0x0800;
+        else flags &= 0xF7FF;
+    }
+}
+
+inline void handleOAnd(u16 val1, u16 val2, bool word)
+{
+    if(word)
+    {
+        if((((val1 ^ val2) ^ 0x8000) & ((val1 & val2) ^ val1) & 0x8000)) flags |= 0x0800;
+        else flags &= 0xF7FF;
+    }
+    else
+    {
+        if((((val1 ^ val2) ^ 0x80) & ((val1 & val2) ^ val1) & 0x80)) flags |= 0x0800;
+        else flags &= 0xF7FF;
+    }
+}
+
 inline void handleP(u16 val, bool word)
 {
     if(word)
@@ -1450,6 +1478,224 @@ void rtick()
             ip+=1;
             break;
         }
+        case 0x18:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,false,false);
+            u8 tmp = *loc.src8;
+            u8 tmp1 = *loc.dst8;
+            u16 tmp2 = tmp - tmp1 - (flags & 1);
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOSub(tmp,tmp1,false);
+            *loc.src8 -= *loc.dst8 + (flags & 1);
+            u8 tmp3 = *loc.src8;
+            handleP(tmp3,false);
+            handleZ(tmp3);
+            handleS(tmp3,false);
+            ip+=2;
+            break;
+        }
+        case 0x19:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,true,false);
+            u16 tmp = *loc.src16;
+            u16 tmp1 = *loc.dst16;
+            u32 tmp2 = tmp - tmp1 - (flags & 1);
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOSub(tmp,tmp1,true);
+            *loc.src16 -= *loc.dst16 + (flags & 1);
+            u16 tmp3 = *loc.src16;
+            handleP(tmp3,true);
+            handleZ(tmp3);
+            handleS(tmp3,true);
+            ip+=2;
+            break;
+        }
+        case 0x1A:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,false,false);
+            u8 tmp = *loc.dst8;
+            u8 tmp1 = *loc.src8;
+            u16 tmp2 = tmp - tmp1 - (flags & 1);
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOSub(tmp1,tmp,false);
+            *loc.dst8 -= *loc.src8 + (flags & 1);
+            u8 tmp3 = *loc.dst8;
+            handleP(tmp3,false);
+            handleZ(tmp3);
+            handleS(tmp3,false);
+            ip+=2;
+            break;
+        }
+        case 0x1B:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,true,false);
+            u16 tmp = *loc.dst16;
+            u16 tmp1 = *loc.src16;
+            u32 tmp2 = tmp - tmp1 - (flags & 1);
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOSub(tmp1,tmp,true);
+            *loc.dst16 -= *loc.src16 + (flags & 1);
+            u16 tmp3 = *loc.dst16;
+            handleP(tmp3,true);
+            handleZ(tmp3);
+            handleS(tmp3,true);
+            ip+=2;
+            break;
+        }
+        case 0x1C:
+        {
+            u8 tmp = axreg.parts.l;
+            u8 tmp1 = RAM::rb(cs,ip+1);
+            u16 tmp2 = tmp - tmp1 - (flags & 1);
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOSub(tmp,tmp1,false);
+            axreg.parts.l -= tmp1 + (flags & 1);
+            handleP(axreg.parts.l,false);
+            handleZ(axreg.parts.l);
+            handleS(tmp3,false);
+            ip+=2;
+            break;
+        }
+        case 0x1D:
+        {
+            u16 tmp = axreg.w;
+            u16 tmp1 = RAM::rb(cs,ip+1) | (RAM::rb(cs,ip+2)<<8);
+            u32 tmp2 = tmp - tmp1 - (flags & 1);
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOSub(tmp,tmp1,true);
+            axreg.w -= tmp1 + (flags & 1);
+            handleP(axreg.w,true);
+            handleZ(axreg.w);
+            handleS(tmp3,true);
+            ip+=3;
+            break;
+        }
+        case 0x1E:
+        {
+            sp-=2;
+            RAM::wb(ss,sp,ds);
+            ip+=1;
+            break;
+        }
+        case 0x1F:
+        {
+            ds = RAM::rb(ss,sp);
+            sp+=2;
+            ip+=1;
+            break;
+        }
+        case 0x20:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,false,false);
+            u8 tmp = *loc.src8;
+            u8 tmp1 = *loc.dst8;
+            u16 tmp2 = tmp & tmp1;
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOAnd(tmp,tmp1,false);
+            *loc.src8 &= *loc.dst8;
+            u8 tmp3 = *loc.src8;
+            handleP(tmp3,false);
+            handleZ(tmp3);
+            handleS(tmp3,false);
+            ip+=2;
+            break;
+        }
+        case 0x21:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,true,false);
+            u16 tmp = *loc.src16;
+            u16 tmp1 = *loc.dst16;
+            u32 tmp2 = tmp & tmp1;
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOAnd(tmp,tmp1,true);
+            *loc.src16 &= *loc.dst16;
+            u16 tmp3 = *loc.src16;
+            handleP(tmp3,true);
+            handleZ(tmp3);
+            handleS(tmp3,true);
+            ip+=2;
+            break;
+        }
+        case 0x22:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,false,false);
+            u8 tmp = *loc.dst8;
+            u8 tmp1 = *loc.src8;
+            u16 tmp2 = tmp & tmp1;
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOAnd(tmp1,tmp,false);
+            *loc.dst8 &= *loc.src8;
+            u8 tmp3 = *loc.dst8;
+            handleP(tmp3,false);
+            handleZ(tmp3);
+            handleS(tmp3,false);
+            ip+=2;
+            break;
+        }
+        case 0x23:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,true,false);
+            u16 tmp = *loc.dst16;
+            u16 tmp1 = *loc.src16;
+            u32 tmp2 = tmp & tmp1;
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOAnd(tmp1,tmp,true);
+            *loc.dst16 &= *loc.src16;
+            u16 tmp3 = *loc.dst16;
+            handleP(tmp3,true);
+            handleZ(tmp3);
+            handleS(tmp3,true);
+            ip+=2;
+            break;
+        }
+        case 0x24:
+        {
+            u8 tmp = axreg.parts.l;
+            u8 tmp1 = RAM::rb(cs,ip+1);
+            u16 tmp2 = tmp & tmp1;
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOAnd(tmp,tmp1,false);
+            axreg.parts.l &= tmp1;
+            handleP(axreg.parts.l,false);
+            handleZ(axreg.parts.l);
+            handleS(tmp3,false);
+            ip+=2;
+            break;
+        }
+        case 0x25:
+        {
+            u16 tmp = axreg.w;
+            u16 tmp1 = RAM::rb(cs,ip+1) | (RAM::rb(cs,ip+2)<<8);
+            u32 tmp2 = tmp & tmp1;
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOAnd(tmp,tmp1,true);
+            axreg.w &= tmp1;
+            handleP(axreg.w,true);
+            handleZ(axreg.w);
+            handleS(tmp3,true);
+            ip+=3;
+            break;
+        }
         }
     }
 
@@ -1531,6 +1777,13 @@ void tick()
             rep = REP_EQ;
             log("REPE: ");
             tick();
+            break;
+        }
+        case 0xF4:
+        {
+            ip++;
+            halted = true;
+            log("HLT");
             break;
         }
         default:
