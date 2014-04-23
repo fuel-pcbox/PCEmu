@@ -3,9 +3,11 @@
 
 namespace CPU808X
 {
+//Interrupts
 bool irq;
 u8 irqnum;
 
+//Registers
 reg16 axreg, bxreg, cxreg, dxreg;
 u16 si,di,bp,sp;
 u16 cs,ds,es,ss;
@@ -13,7 +15,11 @@ u16 ip;
 
 u16 flags;
 
+//Useful for the HLT instruction.
+
 bool halted;
+
+//Prefix stuff.
 
 enum segs
 {
@@ -30,6 +36,8 @@ enum reps
     REP_EQ,
     REP_NE
 };
+
+//CALL THIS BEFORE USING THE CPU.
 
 void init()
 {
@@ -1029,6 +1037,8 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
 int seg;
 int rep;
 
+//Flag handling functions.
+
 inline void handleZ(u16 val)
 {
     if(val == 0) flags |= 0x0040;
@@ -1106,6 +1116,8 @@ inline void handleA(u16 val1, u16 val2)
     if((val1 & 0x10) ^ (val2 & 0x10)) flags |= 0x0010;
     else flags &= 0xFFEF;
 }
+
+//Only documented opcodes, unless they're widely used. (Which, on the 8086, they AREN'T.)
 
 void rtick()
 {
@@ -1440,6 +1452,8 @@ void rtick()
         }
         }
     }
+
+    //For debugging purposes.
 
     log("ax=%04X\n",axreg.w);
     log("bx=%04X\n",bxreg.w);
