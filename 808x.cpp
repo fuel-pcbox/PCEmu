@@ -1,3 +1,4 @@
+#include "common.h"
 #include "808x.h"
 #include "ram.h"
 
@@ -797,7 +798,7 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
         }
         case 1:
         {
-            res.src16 = &bxreg.wreg.w;
+            res.src16 = &bxreg.w;
         }
         }
         break;
@@ -1237,7 +1238,7 @@ void rtick()
             axreg.parts.l += tmp1;
             handleP(axreg.parts.l,false);
             handleZ(axreg.parts.l);
-            handleS(tmp3,false);
+            handleS(axreg.parts.l,false);
             ip+=2;
             break;
         }
@@ -1252,7 +1253,7 @@ void rtick()
             axreg.w += tmp1;
             handleP(axreg.w,true);
             handleZ(axreg.w);
-            handleS(tmp3,true);
+            handleS(axreg.w,true);
             ip+=3;
             break;
         }
@@ -1338,7 +1339,7 @@ void rtick()
             axreg.parts.l |= tmp1;
             handleP(axreg.parts.l,false);
             handleZ(axreg.parts.l);
-            handleS(tmp3,false);
+            handleS(axreg.parts.l,false);
             ip+=2;
             break;
         }
@@ -1350,7 +1351,7 @@ void rtick()
             axreg.w |= tmp1;
             handleP(axreg.w,true);
             handleZ(axreg.w);
-            handleS(tmp3,true);
+            handleS(axreg.w,true);
             ip+=3;
             break;
         }
@@ -1445,7 +1446,7 @@ void rtick()
             axreg.parts.l += tmp1 + (flags & 1);
             handleP(axreg.parts.l,false);
             handleZ(axreg.parts.l);
-            handleS(tmp3,false);
+            handleS(axreg.parts.l,false);
             ip+=2;
             break;
         }
@@ -1460,7 +1461,7 @@ void rtick()
             axreg.w += tmp1 + (flags & 1);
             handleP(axreg.w,true);
             handleZ(axreg.w);
-            handleS(tmp3,true);
+            handleS(axreg.w,true);
             ip+=3;
             break;
         }
@@ -1561,7 +1562,7 @@ void rtick()
             axreg.parts.l -= tmp1 + (flags & 1);
             handleP(axreg.parts.l,false);
             handleZ(axreg.parts.l);
-            handleS(tmp3,false);
+            handleS(axreg.parts.l,false);
             ip+=2;
             break;
         }
@@ -1576,7 +1577,7 @@ void rtick()
             axreg.w -= tmp1 + (flags & 1);
             handleP(axreg.w,true);
             handleZ(axreg.w);
-            handleS(tmp3,true);
+            handleS(axreg.w,true);
             ip+=3;
             break;
         }
@@ -1677,7 +1678,7 @@ void rtick()
             axreg.parts.l &= tmp1;
             handleP(axreg.parts.l,false);
             handleZ(axreg.parts.l);
-            handleS(tmp3,false);
+            handleS(axreg.parts.l,false);
             ip+=2;
             break;
         }
@@ -1692,7 +1693,7 @@ void rtick()
             axreg.w &= tmp1;
             handleP(axreg.w,true);
             handleZ(axreg.w);
-            handleS(tmp3,true);
+            handleS(axreg.w,true);
             ip+=3;
             break;
         }
@@ -1701,19 +1702,19 @@ void rtick()
 
     //For debugging purposes.
 
-    log("ax=%04X\n",axreg.w);
-    log("bx=%04X\n",bxreg.w);
-    log("cx=%04X\n",cxreg.w);
-    log("dx=%04X\n",dxreg.w);
-    log("cs=%04X\n",cs);
-    log("ip=%04X\n",ip);
-    log("ds=%04X\n",ds);
-    log("es=%04X\n",es);
-    log("ss=%04X\n",ss);
-    log("si=%04X\n",si);
-    log("di=%04X\n",di);
-    log("sp=%04X\n",sp);
-    log("bp=%04X\n",bp);
+    printf("ax=%04X\n",axreg.w);
+    printf("bx=%04X\n",bxreg.w);
+    printf("cx=%04X\n",cxreg.w);
+    printf("dx=%04X\n",dxreg.w);
+    printf("cs=%04X\n",cs);
+    printf("ip=%04X\n",ip);
+    printf("ds=%04X\n",ds);
+    printf("es=%04X\n",es);
+    printf("ss=%04X\n",ss);
+    printf("si=%04X\n",si);
+    printf("di=%04X\n",di);
+    printf("sp=%04X\n",sp);
+    printf("bp=%04X\n",bp);
 }
 
 void tick()
@@ -1728,15 +1729,15 @@ void tick()
         {
             ip++;
             seg = SEG_ES;
-            log("ES: ");
-            tick()
+            printf("ES: ");
+            tick();
             break;
         }
         case 0x2E:
         {
             ip++;
             seg = SEG_CS;
-            log("CS: ");
+            printf("CS: ");
             tick();
             break;
         }
@@ -1744,7 +1745,7 @@ void tick()
         {
             ip++;
             seg = SEG_SS;
-            log("SS: ");
+            printf("SS: ");
             tick();
             break;
         }
@@ -1752,14 +1753,14 @@ void tick()
         {
             ip++;
             seg = SEG_DS;
-            log("DS: ");
+            printf("DS: ");
             tick();
             break;
         }
         case 0xF0:
         {
             ip++;
-            log("LOCK: ");
+            printf("LOCK: ");
             tick();
             break;
         }
@@ -1767,7 +1768,7 @@ void tick()
         {
             ip++;
             rep = REP_NE;
-            log("REPNE: ");
+            printf("REPNE: ");
             tick();
             break;
         }
@@ -1775,7 +1776,7 @@ void tick()
         {
             ip++;
             rep = REP_EQ;
-            log("REPE: ");
+            printf("REPE: ");
             tick();
             break;
         }
@@ -1783,7 +1784,7 @@ void tick()
         {
             ip++;
             halted = true;
-            log("HLT");
+            printf("HLT");
             break;
         }
         default:

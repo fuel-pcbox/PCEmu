@@ -1,5 +1,5 @@
-#ifndef 808X_H
-#define 808X_H
+#ifndef CPU808X_H
+#define CPU808X_H
 
 #include "common.h"
 
@@ -30,7 +30,7 @@ extern bool halted;
 extern int seg;
 extern int rep;
 
-unsigned getaddr(u16 seg, off);
+unsigned getaddr(u16 seg, u16 off);
 
 void init();
 void tick();
