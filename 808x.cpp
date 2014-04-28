@@ -1151,6 +1151,7 @@ inline void handleA(u16 val1, u16 val2)
 void rtick()
 {
     u8 op = RAM::rb(cs,ip);
+    printf("%02X\n",op);
     if(!halted)
     {
         switch(op)
