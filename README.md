@@ -1,10 +1,14 @@
 PCEmu is owned by nobody. It is public domain.
 
-TODO:
+[![Stories in Ready](https://badge.waffle.io/alegend45/pcemu.png?label=ready&title=Ready)](http://waffle.io/alegend45/pcemu)
+
+TODO
+====
 
 [ ] 808x emulation
 
-USAGE:
+USAGE
+=====
 
 Once PCEmu is compiled, you need to make a configuration file.
 
