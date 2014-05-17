@@ -1915,6 +1915,98 @@ void rtick()
             ip+=3;
             break;
         }
+        case 0x38:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,false,false);
+            u8 tmp = *loc.src8;
+            u8 tmp1 = *loc.dst8;
+            u16 tmp2 = tmp - tmp1;
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOSub(tmp,tmp1,false);
+            handleP(tmp2&0xFF,false);
+            handleZ(tmp2&0xFF);
+            handleS(tmp2&0xFF,false);
+            ip+=2;
+            break;
+        }
+        case 0x39:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,true,false);
+            u16 tmp = *loc.src16;
+            u16 tmp1 = *loc.dst16;
+            u32 tmp2 = tmp - tmp1;
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOSub(tmp,tmp1,true);
+            handleP(tmp2&0xFFFF,true);
+            handleZ(tmp2&0xFFFF);
+            handleS(tmp2&0xFFFF,true);
+            ip+=2;
+            break;
+        }
+        case 0x3A:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,false,false);
+            u8 tmp = *loc.dst8;
+            u8 tmp1 = *loc.src8;
+            u16 tmp2 = tmp - tmp1;
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOSub(tmp1,tmp,false);
+            handleP(tmp2&0xFF,false);
+            handleZ(tmp2&0xFF);
+            handleS(tmp2&0xFF,false);
+            ip+=2;
+            break;
+        }
+        case 0x3B:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,true,false);
+            u16 tmp = *loc.dst16;
+            u16 tmp1 = *loc.src16;
+            u32 tmp2 = tmp - tmp1;
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOSub(tmp1,tmp,true);
+            handleP(tmp2&0xFFFF,true);
+            handleZ(tmp2&0xFFFF);
+            handleS(tmp2&0xFFFF,true);
+            ip+=2;
+            break;
+        }
+        case 0x3C:
+        {
+            u8 tmp = axreg.parts.l;
+            u8 tmp1 = RAM::rb(cs,ip+1);
+            u16 tmp2 = tmp - tmp1;
+            handleC(tmp2,false);
+            handleA(tmp,tmp1);
+            handleOSub(tmp,tmp1,false);
+            handleP(tmp2&0xFF,false);
+            handleZ(tmp2&0xFF);
+            handleS(tmp2&0xFF,false);
+            ip+=2;
+            break;
+        }
+        case 0x3D:
+        {
+            u16 tmp = axreg.w;
+            u16 tmp1 = RAM::rb(cs,ip+1) | (RAM::rb(cs,ip+2)<<8);
+            u32 tmp2 = tmp - tmp1;
+            handleC(tmp2,true);
+            handleA(tmp,tmp1);
+            handleOSub(tmp,tmp1,true);
+            handleP(tmp2&0xFFFF,true);
+            handleZ(tmp2&0xFFFF);
+            handleS(tmp2&0xFFFF,true);
+            ip+=3;
+            break;
+        }
         case 0x40:
         {
             u16 tmp = axreg.w;
@@ -2248,8 +2340,214 @@ void rtick()
                     handleS(*loc.src8,false);
                     break;
                 }
+                case 0x08:
+                {
+                    u8 tmp = *loc.src8;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp | tmp1;
+                    handleC(tmp2,false);
+                    *loc.src8 |= tmp1;
+                    handleP(*loc.src8,false);
+                    handleZ(*loc.src8);
+                    handleS(*loc.src8,false);
+                    break;
+                }
+                case 0x10:
+                {
+                    u8 tmp = *loc.src8;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp + tmp1 + (flags & 1);
+                    handleC(tmp2,false);
+                    handleA(tmp,tmp1);
+                    handleOAdd(tmp,tmp1,false);
+                    *loc.src8 += tmp1 + (flags & 1);
+                    handleP(*loc.src8,false);
+                    handleZ(*loc.src8);
+                    handleS(*loc.src8,false);
+                    break;
+                }
+                case 0x18:
+                {
+                    u8 tmp = *loc.src8;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp - tmp1 - (flags & 1);
+                    handleC(tmp2,false);
+                    handleA(tmp,tmp1);
+                    handleOSub(tmp,tmp1,false);
+                    *loc.src8 -= tmp1 + (flags & 1);
+                    handleP(*loc.src8,false);
+                    handleZ(*loc.src8);
+                    handleS(*loc.src8,false);
+                    break;
+                }
+                case 0x20:
+                {
+                    u8 tmp = *loc.src8;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp & tmp1;
+                    handleC(tmp2,false);
+                    *loc.src8 &= tmp1;
+                    handleP(*loc.src8,false);
+                    handleZ(*loc.src8);
+                    handleS(*loc.src8,false);
+                    break;
+                }
+                case 0x28:
+                {
+                    u8 tmp = *loc.src8;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp - tmp1;
+                    handleC(tmp2,false);
+                    handleA(tmp,tmp1);
+                    handleOSub(tmp,tmp1,false);
+                    *loc.src8 -= tmp1;
+                    handleP(*loc.src8,false);
+                    handleZ(*loc.src8);
+                    handleS(*loc.src8,false);
+                    break;
+                }
+                case 0x30:
+                {
+                    u8 tmp = *loc.src8;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp ^ tmp1;
+                    handleC(tmp2,false);
+                    *loc.src8 ^= tmp1;
+                    handleP(*loc.src8,false);
+                    handleZ(*loc.src8);
+                    handleS(*loc.src8,false);
+                    break;
+                }
+                case 0x38:
+                {
+                    u8 tmp = *loc.src8;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp - tmp1;
+                    handleC(tmp2,false);
+                    handleA(tmp,tmp1);
+                    handleOSub(tmp,tmp1,false);
+                    handleP(tmp2&0xFF,false);
+                    handleZ(tmp2&0xFF);
+                    handleS(tmp2&0xFF,false);
+                    break;
+                }
             }
             ip+=3;
+            break;
+        }
+        case 0x81:
+        {
+            u8 op2 = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,op2,true,false);
+            switch(op2&0x38)
+            {
+                case 0x00:
+                {
+                    u8 tmp = *loc.src16;
+                    u16 tmp1 = RAM::rb(cs,ip+2)|(RAM::rb(cs,ip+3)<<8);
+                    u32 tmp2 = tmp + tmp1;
+                    handleC(tmp2,true);
+                    handleA(tmp,tmp1);
+                    handleOAdd(tmp,tmp1,true);
+                    *loc.src16 += tmp1;
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x08:
+                {
+                    u16 tmp = *loc.src16;
+                    u16 tmp1 = RAM::rb(cs,ip+2)|(RAM::rb(cs,ip+3)<<8);
+                    u16 tmp2 = tmp | tmp1;
+                    handleC(tmp2,true);
+                    *loc.src16 |= tmp1;
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x10:
+                {
+                    u16 tmp = *loc.src16;
+                    u16 tmp1 = RAM::rb(cs,ip+2)|(RAM::rb(cs,ip+3)<<8);
+                    u32 tmp2 = tmp + tmp1 + (flags & 1);
+                    handleC(tmp2,true);
+                    handleA(tmp,tmp1);
+                    handleOAdd(tmp,tmp1,true);
+                    *loc.src16 += tmp1 + (flags & 1);
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x18:
+                {
+                    u16 tmp = *loc.src16;
+                    u16 tmp1 = RAM::rb(cs,ip+2)|(RAM::rb(cs,ip+3)<<8);
+                    u32 tmp2 = tmp - tmp1 - (flags & 1);
+                    handleC(tmp2,true);
+                    handleA(tmp,tmp1);
+                    handleOSub(tmp,tmp1,true);
+                    *loc.src16 -= tmp1 + (flags & 1);
+                    handleP(*loc.src8,true);
+                    handleZ(*loc.src8);
+                    handleS(*loc.src8,true);
+                    break;
+                }
+                case 0x20:
+                {
+                    u16 tmp = *loc.src16;
+                    u16 tmp1 = RAM::rb(cs,ip+2)|(RAM::rb(cs,ip+3)<<8);
+                    u16 tmp2 = tmp & tmp1;
+                    handleC(tmp2,true);
+                    *loc.src16 &= tmp1;
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x28:
+                {
+                    u16 tmp = *loc.src16;
+                    u16 tmp1 = RAM::rb(cs,ip+2)|(RAM::rb(cs,ip+3)<<8);
+                    u16 tmp2 = tmp - tmp1;
+                    handleC(tmp2,true);
+                    handleA(tmp,tmp1);
+                    handleOSub(tmp,tmp1,true);
+                    *loc.src16 -= tmp1;
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x30:
+                {
+                    u16 tmp = *loc.src16;
+                    u16 tmp1 = RAM::rb(cs,ip+2)|(RAM::rb(cs,ip+3)<<8);
+                    u16 tmp2 = tmp ^ tmp1;
+                    handleC(tmp2,true);
+                    *loc.src16 ^= tmp1;
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x38:
+                {
+                    u16 tmp = *loc.src16;
+                    u16 tmp1 = RAM::rb(cs,ip+2)|(RAM::rb(cs,ip+3)<<8);
+                    u32 tmp2 = tmp - tmp1;
+                    handleC(tmp2,false);
+                    handleA(tmp,tmp1);
+                    handleOSub(tmp,tmp1,false);
+                    handleP(tmp2&0xFFFF,false);
+                    handleZ(tmp2&0xFFFF);
+                    handleS(tmp2&0xFFFF,false);
+                    break;
+                }
+            }
+            ip+=4;
             break;
         }
         case 0x83:
@@ -2270,6 +2568,97 @@ void rtick()
                     handleP(*loc.src16,true);
                     handleZ(*loc.src16);
                     handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x08:
+                {
+                    u16 tmp = *loc.src16;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp | tmp1;
+                    handleC(tmp2,true);
+                    *loc.src16 |= tmp1;
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x10:
+                {
+                    u16 tmp = *loc.src16;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u32 tmp2 = tmp + tmp1 + (flags & 1);
+                    handleC(tmp2,true);
+                    handleA(tmp,tmp1);
+                    handleOAdd(tmp,tmp1,true);
+                    *loc.src16 += tmp1 + (flags & 1);
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x18:
+                {
+                    u16 tmp = *loc.src16;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u32 tmp2 = tmp - tmp1 - (flags & 1);
+                    handleC(tmp2,true);
+                    handleA(tmp,tmp1);
+                    handleOSub(tmp,tmp1,true);
+                    *loc.src16 -= tmp1 + (flags & 1);
+                    handleP(*loc.src8,true);
+                    handleZ(*loc.src8);
+                    handleS(*loc.src8,true);
+                    break;
+                }
+                case 0x20:
+                {
+                    u16 tmp = *loc.src16;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp & tmp1;
+                    handleC(tmp2,true);
+                    *loc.src16 &= tmp1;
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x28:
+                {
+                    u16 tmp = *loc.src16;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp - tmp1;
+                    handleC(tmp2,true);
+                    handleA(tmp,tmp1);
+                    handleOSub(tmp,tmp1,true);
+                    *loc.src16 -= tmp1;
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x30:
+                {
+                    u16 tmp = *loc.src16;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u16 tmp2 = tmp ^ tmp1;
+                    handleC(tmp2,true);
+                    *loc.src16 ^= tmp1;
+                    handleP(*loc.src16,true);
+                    handleZ(*loc.src16);
+                    handleS(*loc.src16,true);
+                    break;
+                }
+                case 0x38:
+                {
+                    u16 tmp = *loc.src16;
+                    u8 tmp1 = RAM::rb(cs,ip+2);
+                    u32 tmp2 = tmp - tmp1;
+                    handleC(tmp2,false);
+                    handleA(tmp,tmp1);
+                    handleOSub(tmp,tmp1,false);
+                    handleP(tmp2&0xFFFF,false);
+                    handleZ(tmp2&0xFFFF);
+                    handleS(tmp2&0xFFFF,false);
                     break;
                 }
             }

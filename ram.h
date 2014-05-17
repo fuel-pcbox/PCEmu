@@ -11,6 +11,10 @@ u8 rb(u16 seg, u16 off);
 
 void wb(u16 seg, u16 off, u8 data);
 
+u8 rb(u32 addr);
+
+void wb(u32 addr, u8 data);
+
 }
 
 #endif

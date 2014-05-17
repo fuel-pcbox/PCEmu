@@ -15,4 +15,14 @@ void wb(u16 seg, u16 off, u8 data)
   RAM[CPU808X::getaddr(seg,off)] = data;
 }
 
+u8 rb(u32 addr)
+{
+  return RAM[addr];
+}
+
+void wb(u32 addr, u8 data)
+{
+  RAM[addr] = data;
+}
+
 }
