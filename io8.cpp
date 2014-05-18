@@ -1,4 +1,5 @@
 #include "io8.h"
+#include "pic.h"
 
 namespace IO8
 {
