@@ -5,6 +5,8 @@
 
 namespace PIC
 {
+void init();
+
 u8 rb(u16 addr);
 
 void wb(u16 addr, u8 data);
