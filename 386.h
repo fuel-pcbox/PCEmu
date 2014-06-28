@@ -68,7 +68,7 @@ extern u32 eip;
 
 extern u32 cr[5];
 
-extern reg32 eflags;
+extern u32 eflags;
 
 extern systemtbl gdtr,idtr;
 extern seg_desc ldtr,tr;

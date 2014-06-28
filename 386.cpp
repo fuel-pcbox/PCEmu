@@ -12,7 +12,7 @@ reg32 eipreg;
 
 u32 cr[5];
 
-reg32 eflags;
+u32 eflags;
 
 systemtbl gdtr,idtr;
 seg_desc ldtr,tr;
@@ -52,7 +52,7 @@ void interrupt(u8 intr)
         eip = RAM::rb(idtr.base + (intr << 2))|(RAM::rb(idtr.base + (intr << 2) + 1));
 
         //Clear trap flag and interrupt flag.
-        flags &= 0xFCFF;
+        eflags &= 0xFFFFFCFF;
     }
 }
 
@@ -66,6 +66,17 @@ u32 getaddr(sreg seg, u32 addr)
     }
 }
 
-void init();
-void tick();
+void init()
+{
+    cr[0] = 0;
+    cs.selector = 0xF000;
+    eip = 0xFFF0;
+    eflags = 0x00000002;
+    halted = false;
+}
+
+void tick()
+{
+    printf("386 IS NOT SUPPORTED YET.\n");
+}
 }

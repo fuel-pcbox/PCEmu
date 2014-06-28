@@ -2713,6 +2713,100 @@ void rtick()
             ip+=2;
             break;
         }
+        case 0xA5:
+        {
+            switch(rep)
+            {
+            case REP_NONE:
+            {
+                RAM::wb(es,di,RAM::rb(ds,si));
+                RAM::wb(es,di+1,RAM::rb(ds,si+1));
+                if(!(flags&0x0400))
+                {
+                    di+=2;
+                    si+=2;
+                }
+                else
+                {
+                    di-=2;
+                    si-=2;
+                }
+                break;
+            }
+            case REP_EQ:
+            case REP_NE:
+            {
+                for(;cxreg.w!=0;cxreg.w--)
+                {
+                    RAM::wb(es,di,RAM::rb(ds,si));
+                    RAM::wb(es,di+1,RAM::rb(ds,si+1));
+                    if(!(flags&0x0400))
+                    {
+                        di+=2;
+                        si+=2;
+                    }
+                    else
+                    {
+                        di-=2;
+                        si-=2;
+                    }
+                }
+                break;
+            }
+            }
+            ip++;
+            break;
+        }
+        case 0xAB:
+        {
+            switch(rep)
+            {
+            case REP_NONE:
+            {
+                RAM::wb(es,di,axreg.parts.l);
+                RAM::wb(es,di+1,axreg.parts.h);
+                if(!(flags&0x0400)) di+=2;
+                else di-=2;
+                break;
+            }
+            case REP_EQ:
+            case REP_NE:
+            {
+                for(;cxreg.w!=0;cxreg.w--)
+                {
+                    RAM::wb(es,di,axreg.parts.l);
+                    RAM::wb(es,di+1,axreg.parts.h);
+                    if(!(flags&0x0400)) di+=2;
+                    else di-=2;
+                }
+                break;
+            }
+            }
+            ip++;
+            break;
+        }
+        case 0xAD:
+        {
+            switch(seg)
+            {
+            case SEG_CS:
+            {
+                axreg.parts.l = RAM::rb(cs,si);
+                axreg.parts.h = RAM::rb(cs,si+1);
+                break;
+            }
+            case SEG_DEFAULT:
+            {
+                axreg.parts.l = RAM::rb(ds,si);
+                axreg.parts.h = RAM::rb(ds,si+1);
+                break;
+            }
+            }
+            if(!(flags&0x0400)) si+=2;
+            else si-=2;
+            ip++;
+            break;
+        }
         case 0xB0:
         {
             axreg.parts.l = RAM::rb(cs,ip+1);
@@ -2890,11 +2984,35 @@ void rtick()
             ip+=2;
             break;
         }
+        case 0xE2:
+        {
+            u8 tmp = RAM::rb(cs,ip+1);
+            if(--cxreg.w != 0) ip += (s8)tmp;
+            ip+=2;
+            break;
+        }
+        case 0xE4:
+        {
+            u8 tmp = RAM::rb(cs,ip+1);
+            axreg.parts.l = IO::rb(tmp);
+            ip+=2;
+            break;
+        }
         case 0xE6:
         {
             u8 tmp = RAM::rb(cs,ip+1);
             IO::wb(tmp,axreg.parts.l);
             ip+=2;
+            break;
+        }
+        case 0xE8:
+        {
+            u16 tmp = RAM::rb(cs,ip+1) | (RAM::rb(cs,ip+2)<<8);
+            sp-=2;
+            RAM::wb(ss,sp,(ip+3)&0xFF);
+            RAM::wb(ss,sp+1,(ip+3)>>8);
+            ip += (s16)tmp;
+            ip+=3;
             break;
         }
         case 0xEA:
@@ -2903,6 +3021,13 @@ void rtick()
             u16 tmp1 = RAM::rb(cs,ip+3) | (RAM::rb(cs,ip+4)<<8);
             cs = tmp1;
             ip = tmp;
+            break;
+        }
+        case 0xEB:
+        {
+            u8 tmp = RAM::rb(cs,ip+1);
+            ip += (s8)tmp;
+            ip+=2;
             break;
         }
         case 0xEC:
@@ -2927,6 +3052,21 @@ void rtick()
         {
             IO::ww(dxreg.w,axreg.w);
             ip++;
+            break;
+        }
+        case 0xF7:
+        {
+            u8 op2 = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,op2,true,false);
+            switch(op2&0x38)
+            {
+            case 0x10:
+            {
+                *loc.src16 = ~(*loc.src16);
+                break;
+            }
+            }
+            ip+=2;
             break;
         }
         case 0xF8:
@@ -2963,6 +3103,28 @@ void rtick()
         {
             flags |= 0x0400;
             ip++;
+            break;
+        }
+        case 0xFE:
+        {
+            u8 op2 = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,op2,false,false);
+            switch(op2&0x38)
+            {
+            case 0x00:
+            {
+                u16 tmp = (*loc.src8) + 1;
+                handleC(tmp,false);
+                handleA(tmp,1);
+                handleOAdd(tmp,1,false);
+                *loc.src8++;
+                handleP(*loc.src8,false);
+                handleZ(*loc.src8);
+                handleS(*loc.src8,false);
+                break;
+            }
+            }
+            ip+=2;
             break;
         }
         }

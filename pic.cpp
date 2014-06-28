@@ -52,9 +52,9 @@ void wb(u16 addr, u8 data)
             pics[0].imr = 0;
             pics[0].isr = 0;
             pics[0].irr = 0;
-            
+
             pics[0].single = data & 2;
-            
+
             pics[0].state = 1;
         }
         break;
@@ -96,9 +96,9 @@ void wb(u16 addr, u8 data)
             pics[1].imr = 0;
             pics[1].isr = 0;
             pics[1].irr = 0;
-            
+
             pics[1].single = data & 2;
-            
+
             pics[1].state = 1;
         }
         break;
