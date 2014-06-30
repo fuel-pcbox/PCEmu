@@ -2,18 +2,6 @@
 
 namespace PIC
 {
-
-struct pic
-{
-    u8 imr, isr, irr;
-    u8 offset;
-    bool single;
-    enum
-    {
-        ICW1,ICW2,ICW3,ICW4,READY
-    } state;
-};
-
 pic pics[2];
 
 void init()

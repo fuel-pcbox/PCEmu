@@ -1163,6 +1163,18 @@ inline void handleA(u16 val1, u16 val2)
 
 void interrupt(u8 intr)
 {
+    sp-=2;
+    RAM::wb(ss,sp,flags & 0xFF);
+    RAM::wb(ss,sp+1,flags >> 8);
+    flags &= 0xFCFF;
+    sp-=2;
+    RAM::wb(ss,sp,cs & 0xFF);
+    RAM::wb(ss,sp+1,cs >> 8);
+    sp-=2;
+    RAM::wb(ss,sp,ip & 0xFF);
+    RAM::wb(ss,sp+1,ip >> 8);
+    cs = RAM::rb(0,(intr<<2)+2)|(RAM::rb(0,(intr<<2)+3)<<8);
+    ip = RAM::rb(0,(intr<<2))|(RAM::rb(0,(intr<<2)+1)<<8);
 }
 
 //Only documented opcodes, unless they're widely used. (Which, on the 8086, they AREN'T.)
@@ -1715,6 +1727,23 @@ void rtick()
             handleZ(axreg.w);
             handleS(axreg.w,true);
             ip+=3;
+            break;
+        }
+        case 0x27:
+        {
+            if((axreg.parts.l & 0x0F) > 9 || (flags & 0x0010))
+            {
+                axreg.parts.l += 6;
+                flags |= 0x0010;
+            }
+            else flags &= 0xFFEF;
+            if((axreg.parts.l > 0x9F) || (flags & 0x0001))
+            {
+                axreg.parts.l += 0x60;
+                flags |= 0x0001;
+            }
+            else flags &= 0xFFFE;
+            ip++;
             break;
         }
         case 0x28:
@@ -3129,7 +3158,12 @@ void rtick()
         }
         }
     }
-
+    
+    if(irq)
+    {
+        interrupt(irqnum);
+    }
+    
     //For debugging purposes.
 
     printf("ax=%04X\n",axreg.w);
@@ -3146,6 +3180,9 @@ void rtick()
     printf("sp=%04X\n",sp);
     printf("bp=%04X\n",bp);
     printf("flags=%04X\n",flags);
+    
+    seg = SEG_DEFAULT;
+    rep = REP_NONE;
 }
 
 void tick()

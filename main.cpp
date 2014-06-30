@@ -1,4 +1,6 @@
 #include "ram.h"
+#include "pit.h"
+#include "pic.h"
 
 struct config
 {
@@ -73,9 +75,12 @@ int main(int ac, char** av)
     fread(RAM::RAM + (0x100000 - size),1,size,biosfp);
 
     CPU808X::init();
+    PIC::init();
+    PIT::init();
 
     for(;;)
     {
         CPU808X::tick();
+        PIT::tick();
     }
 }

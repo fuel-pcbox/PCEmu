@@ -1,5 +1,7 @@
 #include "io8.h"
 #include "pic.h"
+#include "pit.h"
+#include "kbdc.h"
 
 namespace IO8
 {
@@ -20,6 +22,17 @@ void wb(u16 addr, u8 data)
     {
         PIC::wb(addr,data);
         break;
+    }
+    case 0x40:
+    case 0x41:
+    case 0x42:
+    case 0x43:
+    {
+        PIT::wb(addr,data);
+    }
+    case 0x61:
+    {
+        KBDC::wb(addr,data);
     }
     }
 }

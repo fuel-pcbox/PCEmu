@@ -5,6 +5,20 @@
 
 namespace PIC
 {
+
+struct pic
+{
+    u8 imr, isr, irr;
+    u8 offset;
+    bool single;
+    enum
+    {
+        ICW1,ICW2,ICW3,ICW4,READY
+    } state;
+};
+
+extern pic pics[2];
+
 void init();
 
 u8 rb(u16 addr);
