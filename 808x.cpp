@@ -291,6 +291,7 @@ locs decodeops(int seg, u8 modrm, bool word, bool segarg)
             break;
         }
         }
+        break;
     }
     case 0x40:
     {
@@ -2742,6 +2743,11 @@ void rtick()
             ip+=2;
             break;
         }
+        case 0x90:
+        {
+            ip++;
+            break;
+        }
         case 0xA5:
         {
             switch(rep)
@@ -2932,6 +2938,14 @@ void rtick()
             ip+=3;
             break;
         }
+        case 0xC6:
+        {
+            u8 modrm = RAM::rb(cs,ip+1);
+            locs loc = decodeops(seg,modrm,false,false);
+            *loc.src8 = RAM::rb(cs,ip+2);
+            ip+=3;
+            break;
+        }
         case 0xC7:
         {
             u8 modrm = RAM::rb(cs,ip+1);
@@ -3040,6 +3054,13 @@ void rtick()
             sp-=2;
             RAM::wb(ss,sp,(ip+3)&0xFF);
             RAM::wb(ss,sp+1,(ip+3)>>8);
+            ip += (s16)tmp;
+            ip+=3;
+            break;
+        }
+        case 0xE9:
+        {
+            u16 tmp = RAM::rb(cs,ip+1) | (RAM::rb(cs,ip+2)<<8);
             ip += (s16)tmp;
             ip+=3;
             break;

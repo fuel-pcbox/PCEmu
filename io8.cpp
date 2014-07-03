@@ -2,6 +2,7 @@
 #include "pic.h"
 #include "pit.h"
 #include "kbdc.h"
+#include "mda.h"
 
 namespace IO8
 {
@@ -29,10 +30,20 @@ void wb(u16 addr, u8 data)
     case 0x43:
     {
         PIT::wb(addr,data);
+        break;
     }
     case 0x61:
     {
         KBDC::wb(addr,data);
+        break;
+    }
+    case 0x3B4:
+    case 0x3B5:
+    case 0x3B8:
+    case 0x3BA:
+    {
+        MDA::wb(addr,data);
+        break;
     }
     }
 }
