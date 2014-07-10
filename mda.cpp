@@ -36,76 +36,101 @@ void tick()
   u8 chr = RAM::RAM[0xB0000 + (((crtc[0xC]<<8)|crtc[0xD]) + ((y / 14)*crtc[1]) + charcyc) << 1];
   u8 attr = RAM::RAM[0xB0001 + (((crtc[0xC]<<8)|crtc[0xD]) + ((y / 14)*crtc[1]) + charcyc) << 1];
   
-  if(attr != 0x00)
+  u8 fg = 0;
+  u8 bg = 0;
+  
+  switch(attr)
   {
+  case 0x70:
+  case 0xF0:
+  {
+	fg = 0;
+	bg = 192;
+	break;
+  }
+  case 0x78:
+  case 0xF8:
+  {
+	fg = 127;
+	bg = 192;
+	break;
+  }
+  default:
+  {
+	if(attr & 8) fg = 192;
+	else fg = 127;
+	bg = 0;
+	break;
+  }
+  }
+  
   if((y % 14) & 8)
   {
-  screen[(((y*720)+(charcyc*9))*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x80) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9))*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x80) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9))*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x80) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9))*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x80) ? fg : bg;
+  screen[(((y*720)+(charcyc*9))*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x80) ? fg : bg;
+  screen[(((y*720)+(charcyc*9))*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x80) ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+1)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x40) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+1)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x40) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+1)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x40) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+1)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x40)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+1)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x40)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+1)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x40)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+2)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x20) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+2)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x20) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+2)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x20) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+2)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x20)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+2)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x20)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+2)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x20)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+3)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x10) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+3)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x10) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+3)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x10) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+3)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x10)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+3)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x10)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+3)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x10)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+4)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x08) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+4)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x08) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+4)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x08) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+4)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x08)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+4)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x08)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+4)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x08)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+5)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x04) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+5)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x04) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+5)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x04) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+5)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x04)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+5)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x04)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+5)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x04)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+6)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x02) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+6)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x02) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+6)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x02) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+6)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x02)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+6)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x02)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+6)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x02)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+7)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x01) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+7)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x01) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+7)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x01) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+7)*3)+0] = (rom[0x800|(chr*14)+(y % 14)] & 0x01)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+7)*3)+1] = (rom[0x800|(chr*14)+(y % 14)] & 0x01)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+7)*3)+2] = (rom[0x800|(chr*14)+(y % 14)] & 0x01)  ? fg : bg;
   }
   else
   {
-  screen[(((y*720)+(charcyc*9))*3)+0] = (rom[(chr*14)+(y % 14)] & 0x80) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9))*3)+1] = (rom[(chr*14)+(y % 14)] & 0x80) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9))*3)+2] = (rom[(chr*14)+(y % 14)] & 0x80) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9))*3)+0] = (rom[(chr*14)+(y % 14)] & 0x80)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9))*3)+1] = (rom[(chr*14)+(y % 14)] & 0x80)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9))*3)+2] = (rom[(chr*14)+(y % 14)] & 0x80)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+1)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x40) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+1)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x40) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+1)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x40) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+1)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x40)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+1)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x40)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+1)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x40)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+2)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x20) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+2)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x20) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+2)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x20) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+2)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x20)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+2)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x20)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+2)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x20)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+3)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x10) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+3)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x10) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+3)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x10) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+3)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x10)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+3)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x10)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+3)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x10)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+4)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x08) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+4)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x08) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+4)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x08) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+4)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x08)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+4)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x08)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+4)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x08)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+5)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x04) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+5)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x04) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+5)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x04) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+5)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x04)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+5)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x04)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+5)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x04)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+6)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x02) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+6)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x02) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+6)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x02) ? 127 : 0;
+  screen[(((y*720)+(charcyc*9)+6)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x02)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+6)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x02)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+6)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x02)  ? fg : bg;
   
-  screen[(((y*720)+(charcyc*9)+7)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x01) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+7)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x01) ? 127 : 0;
-  screen[(((y*720)+(charcyc*9)+7)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x01) ? 127 : 0;
-  }
+  screen[(((y*720)+(charcyc*9)+7)*3)+0] = (rom[(chr*14)+(y % 14)] & 0x01)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+7)*3)+1] = (rom[(chr*14)+(y % 14)] & 0x01)  ? fg : bg;
+  screen[(((y*720)+(charcyc*9)+7)*3)+2] = (rom[(chr*14)+(y % 14)] & 0x01)  ? fg : bg;
   }
   }
   
