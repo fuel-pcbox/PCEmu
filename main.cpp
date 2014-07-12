@@ -1,4 +1,5 @@
 #include "ram.h"
+#include "io.h"
 #include "pit.h"
 #include "pic.h"
 
@@ -93,7 +94,7 @@ int main(int ac, char** av)
         fclose(romfp);
     }
     
-    for(int i = 0xB0000;i<0xB7FFF;i++)
+    for(int i = 0xA0000;i<0xBFFFF;i++)
     {
         RAM::RAM[i] = 0;
     }

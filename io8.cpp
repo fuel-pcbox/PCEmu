@@ -6,8 +6,18 @@
 
 namespace IO8
 {
+std::string isa1;
+
 u8 rb(u16 addr)
 {
+	switch(addr)
+	{
+	case 0x3BA:
+	{
+		if(isa1 == "mda") return MDA::rb(addr);
+		break;
+	}
+	}
     return 0;
 }
 
@@ -40,9 +50,8 @@ void wb(u16 addr, u8 data)
     case 0x3B4:
     case 0x3B5:
     case 0x3B8:
-    case 0x3BA:
     {
-        MDA::wb(addr,data);
+        if(isa1 == "mda") MDA::wb(addr,data);
         break;
     }
     }
