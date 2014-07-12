@@ -3,5 +3,8 @@ language: cpp
 compiler:
  - gcc
 
+install:
+ - sudo apt-get install libsdl1.2-dev
+
 script:
  - make
